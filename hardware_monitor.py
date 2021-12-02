@@ -1,4 +1,4 @@
-from colorama import Fore, Back, Style, init
+from colorama import Fore, Style, init
 import cpuinfo
 import GPUtil
 import psutil
@@ -6,7 +6,7 @@ import time
 
 # Returns a string representing a usage guage
 def create_usage_gauge(pct):
-    gauge = Style.BRIGHT
+    gauge = ""
     gauge += Fore.WHITE + "[" + Fore.GREEN + "|"
     i = 1
     while i < 10:
@@ -32,18 +32,9 @@ def main():
     # Initialize colorama
     init()
 
-    # Output variables
-    usage_string = """CPU XXX% [||||||||||]
-    GPU XXX% [||||||||||]
-    RAM XXX% [||||||||||]
-    """
-    temps_string = """CPU XXX% [||||||||||]
-    GPU XXX% [||||||||||]
-    """
-
     # Get hardware names
-    cpu_name = cpuinfo.get_cpu_info()['brand_raw'] + "\n"
-    gpu_name = GPUtil.getGPUs()[0].name + "\n"
+    cpu_name = cpuinfo.get_cpu_info()['brand_raw']
+    gpu_name = GPUtil.getGPUs()[0].name
     ram_name = "32.0 GB DDR4"
 
     # Start measuring
@@ -62,14 +53,15 @@ def main():
         gpu_temp = GPUtil.getGPUs()[0].temperature
 
         # Create strings for usage info
-        cpu_usage_string = Fore.BLUE + "CPU " + str(cpu_pct) + "% " + cpu_usage_gauge + "\n" + Fore.BLUE + Style.NORMAL + cpu_name
-        gpu_usage_string = Fore.GREEN + "GPU " + str(gpu_pct) + "% " + gpu_usage_gauge + "\n" + Fore.GREEN + Style.NORMAL + gpu_name
-        ram_usage_string = Fore.RED + "RAM " + str(ram_pct) + "% " + ram_usage_gauge + "\n" + Fore.RED + Style.NORMAL + ram_name
+        cpu_usage_string = Fore.BLUE + "CPU " + str(cpu_pct) + "% " + cpu_usage_gauge + "\n" + Fore.BLUE + cpu_name
+        gpu_usage_string = Fore.GREEN + "GPU " + str(gpu_pct) + "% " + gpu_usage_gauge + "\n" + Fore.GREEN + gpu_name
+        ram_usage_string = Fore.RED + "RAM " + str(ram_pct) + "% " + ram_usage_gauge + "\n" + Fore.RED + ram_name
 
-        print(Back.BLACK, Style.NORMAL)
-        print(cpu_usage_string, end="\r")
-        print(gpu_usage_string, end="\r")
-        print(ram_usage_string, end="\r")
+        print(Style.BRIGHT)
+        print(cpu_usage_string)
+        print(gpu_usage_string)
+        print(ram_usage_string, end="\x1B[6A")
+
         time.sleep(0.5)
 
 main()
